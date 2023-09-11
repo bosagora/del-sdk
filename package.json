@@ -1,0 +1,13 @@
+{
+  "name": "del-osx",
+  "version": "1.0.0",
+  "description": "JS SDK for links e-mail and wallet addresses",
+  "repository": "https://github.com/bosagora/del-sdk",
+  "author": "BOSagora Foundation",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  }
+}

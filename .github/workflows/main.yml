@@ -1,0 +1,29 @@
+name: CI
+
+on: [push, pull_request ]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.operating-system }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest]
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install node ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: yarn install --pure-lockfile
+
+      - name: Build of common
+        run: cd packages/common && yarn run build
+      - name: Run Tests of common
+        run: cd packages/common && yarn run test
