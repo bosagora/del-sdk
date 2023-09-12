@@ -1,6 +1,7 @@
 import { Server } from "ganache";
 import { GanacheServer } from "./helper/GanacheServer";
 import { contextParamsLocalChain } from "./helper/constants";
+import { FakerValidator } from "./helper/FakerValidator";
 import { Client, Context, ContractUtils } from "../src";
 import { AddRequestSteps } from "../src/interfaces";
 import { BigNumber } from "ethers";
@@ -9,6 +10,7 @@ import { ContractDeployer, Deployment } from "./helper/ContractDeployer";
 describe("SDK Client", () => {
     let deployment: Deployment;
     const [, , validator1, validator2, , user1] = GanacheServer.accounts();
+    let fakerValidator: FakerValidator;
 
     describe("SDK Client", () => {
         let server: Server;
@@ -19,10 +21,14 @@ describe("SDK Client", () => {
             deployment = await ContractDeployer.deploy();
 
             GanacheServer.setTestWeb3Signer(user1);
+
+            fakerValidator = new FakerValidator(7070, deployment);
+            await fakerValidator.start();
         });
 
         afterAll(async () => {
             await server.close();
+            await fakerValidator.stop();
         });
 
         describe("Method Check", () => {
