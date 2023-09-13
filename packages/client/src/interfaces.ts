@@ -7,6 +7,7 @@ export interface IClientMethods extends IClientCore {
     toAddress: (email: string) => Promise<string>;
     toEmail: (wallet: string) => Promise<string>;
     nonceOf: (wallet: string) => Promise<BigNumber>;
+    getValidators: () => Promise<ValidatorInfoValue[]>;
 }
 
 export interface IClient {
@@ -27,6 +28,13 @@ export type ToEmailParams = {
 
 export type NonceOfParams = {
     wallet: string;
+};
+
+export type ValidatorInfoValue = {
+    address: string;
+    index: number;
+    endpoint: string;
+    status: number;
 };
 
 export type AddRequestValue =

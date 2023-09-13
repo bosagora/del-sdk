@@ -76,6 +76,11 @@ describe("SDK Client", () => {
                 await expect(await client.methods.toAddress(emailHash)).toEqual(address);
                 await expect(await client.methods.toEmail(address)).toEqual(emailHash);
             });
+
+            it("getValidators", async () => {
+                const infos = await client.methods.getValidators();
+                console.log(infos);
+            });
         });
     });
 });
