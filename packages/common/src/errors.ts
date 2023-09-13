@@ -123,7 +123,7 @@ export class FailedDepositError extends Error {
 export class AmountMismatchError extends Error {
   constructor(expected: bigint, received: bigint) {
     super(
-      `Deposited amount mismatch. Expected: ${expected}, received: ${received}`,
+      `Deposited amount mismatch. Expected: ${expected}, received: ${received}`
     );
   }
 }

@@ -160,7 +160,7 @@ describe("Value encoding", () => {
       },
       {
         bigint: BigInt(
-          "111122223333444455556666777788889999000011112222333344445555666677778888999900",
+          "111122223333444455556666777788889999000011112222333344445555666677778888999900"
         ),
         hexBuffer:
           "f5acf316aa2c0d4e6a464693f94789be9b15ba0ece586181679a3215e03f43dc",
@@ -172,9 +172,11 @@ describe("Value encoding", () => {
       expect(Buffer.from(result).toString("hex")).toEqual(input.hexBuffer);
 
       const leResult = bigIntToLeBuffer(input.bigint);
-      expect(Buffer.from(leResult).reverse().toString("hex")).toEqual(
-        input.hexBuffer,
-      );
+      expect(
+        Buffer.from(leResult)
+          .reverse()
+          .toString("hex")
+      ).toEqual(input.hexBuffer);
     }
   });
 
@@ -227,7 +229,7 @@ describe("Value encoding", () => {
       },
       {
         bigint: BigInt(
-          "111122223333444455556666777788889999000011112222333344445555666677778888999900",
+          "111122223333444455556666777788889999000011112222333344445555666677778888999900"
         ),
         hexBuffer:
           "f5acf316aa2c0d4e6a464693f94789be9b15ba0ece586181679a3215e03f43dc",
@@ -239,7 +241,7 @@ describe("Value encoding", () => {
       expect(result).toEqual(input.bigint);
 
       const result2 = bufferLeToBigInt(
-        Buffer.from(input.hexBuffer, "hex").reverse(),
+        Buffer.from(input.hexBuffer, "hex").reverse()
       );
       expect(result2).toEqual(input.bigint);
     }
@@ -285,16 +287,16 @@ describe("Value encoding", () => {
 
   it("Should return an integer encoded from a float between 1 and 0 and a positive integer number of digits", () => {
     expect(() => encodeRatio(-0.5, 4)).toThrow(
-      "The ratio value should range between 0 and 1",
+      "The ratio value should range between 0 and 1"
     );
     expect(() => encodeRatio(5, 4)).toThrow(
-      "The ratio value should range between 0 and 1",
+      "The ratio value should range between 0 and 1"
     );
     expect(() => encodeRatio(0.5, -1)).toThrow(
-      "The number of digits should range between 1 and 15",
+      "The number of digits should range between 1 and 15"
     );
     expect(() => encodeRatio(0.5, 18)).toThrow(
-      "The number of digits should range between 1 and 15",
+      "The number of digits should range between 1 and 15"
     );
 
     const inputs = [
@@ -317,10 +319,10 @@ describe("Value encoding", () => {
 
   it("Should decode a float from a given bigint and a number of digits", () => {
     expect(() => encodeRatio(0.5, -1)).toThrow(
-      "The number of digits should range between 1 and 15",
+      "The number of digits should range between 1 and 15"
     );
     expect(() => encodeRatio(0.5, 18)).toThrow(
-      "The number of digits should range between 1 and 15",
+      "The number of digits should range between 1 and 15"
     );
 
     const inputs = [
@@ -340,10 +342,10 @@ describe("Value encoding", () => {
     }
 
     expect(() => decodeRatio(Number.MAX_SAFE_INTEGER + 1, 12)).toThrow(
-      "The value is out of range",
+      "The value is out of range"
     );
     expect(() => decodeRatio(BigInt("512345898367483947"), 12)).toThrow(
-      "The value is out of range",
+      "The value is out of range"
     );
     expect(() => decodeRatio(10 ** 2, 1)).toThrow("The value is out of range");
     expect(() => decodeRatio(10 ** 10, 9)).toThrow("The value is out of range");
@@ -548,9 +550,7 @@ describe("Value encoding", () => {
   });
 
   it("bitmapToBoolArray should transform a bigint bitmap into a boolean array", () => {
-    const tests = [
-      { input: BigInt(0), output: getEmpty256Array() },
-    ];
+    const tests = [{ input: BigInt(0), output: getEmpty256Array() }];
     let output = getEmpty256Array();
     output[0] = true;
     tests.push({ input: BigInt(1) << BigInt(0), output });
