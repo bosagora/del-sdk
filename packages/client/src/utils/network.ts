@@ -1,13 +1,12 @@
 import fetch, { UnfetchResponse } from "unfetch";
-import { GenericRecord, IHttpConfig } from "./common";
-import { InvalidResponseError } from "../../utils/errors";
+import { GenericRecord, IHttpConfig } from "../client-common/interfaces/common";
 
 export namespace Network {
     /**
      * Performs a request and returns a JSON object with the response
      */
 
-    export async function get(config: IHttpConfig, path: string, data?: GenericRecord) {
+    export async function get(config: IHttpConfig, path: string, data?: GenericRecord): Promise<UnfetchResponse> {
         const { url, headers } = config;
         const endpoint: URL = new URL(path, url);
         for (const [key, value] of Object.entries(data ?? {})) {
@@ -17,12 +16,9 @@ export namespace Network {
         }
         const response: UnfetchResponse = await fetch(endpoint.href, {
             method: "GET",
-            headers
+            headers,
         });
-        if (!response.ok) {
-            throw new InvalidResponseError(response);
-        }
-        return response.json();
+        return response;
     }
 
     export async function post(config: IHttpConfig, path: string, data?: any) {
@@ -32,14 +28,11 @@ export namespace Network {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                ...headers
+                ...headers,
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
         });
 
-        if (!response.ok) {
-            throw new InvalidResponseError(response);
-        }
-        return response.json();
+        return response;
     }
 }

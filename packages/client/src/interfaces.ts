@@ -5,9 +5,13 @@ import { BigNumber } from "ethers";
 export interface IClientMethods extends IClientCore {
     addRequest: (email: string) => AsyncGenerator<AddRequestValue>;
     toAddress: (email: string) => Promise<string>;
-    toEmail: (wallet: string) => Promise<string>;
-    nonceOf: (wallet: string) => Promise<BigNumber>;
+    toEmail: (address: string) => Promise<string>;
+    nonceOf: (address: string) => Promise<BigNumber>;
     getValidators: () => Promise<ValidatorInfoValue[]>;
+    isRelayUp: () => Promise<boolean>;
+    assignValidatorEndpoint: () => Promise<void>;
+    register: (email: string) => AsyncGenerator<RegisterValue>;
+    getRegisterStatus: (id: string) => Promise<number>;
 }
 
 export interface IClient {
@@ -44,10 +48,24 @@ export type AddRequestValue =
           email: string;
           id: string;
           emailHash: string;
-          wallet: string;
+          address: string;
       };
 
 export enum AddRequestSteps {
     ADDING = "adding",
+    DONE = "done",
+}
+
+export type RegisterValue =
+    | { key: RegisterSteps.DOING; requestId: string; email: string; address: string }
+    | {
+          key: RegisterSteps.DONE;
+          requestId: string;
+          email: string;
+          address: string;
+      };
+
+export enum RegisterSteps {
+    DOING = "doing",
     DONE = "done",
 }

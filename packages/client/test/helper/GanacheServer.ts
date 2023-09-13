@@ -124,7 +124,10 @@ export class GanacheServer {
     }
 
     public static createTestProvider(): JsonRpcProvider {
-        return new JsonRpcProvider(`http://localhost:${GanacheServer.PORT}`, GanacheServer.CHAIN_ID);
+        return new JsonRpcProvider(`http://localhost:${GanacheServer.PORT}`, {
+            chainId: GanacheServer.CHAIN_ID,
+            name: "bosagora_devnet",
+        });
     }
 
     public static setTestProvider(provider: JsonRpcProvider) {
