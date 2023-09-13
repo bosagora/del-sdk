@@ -23,22 +23,15 @@ export class NetworkError extends Error {
     public statusText: string;
 
     /**
-     * The message of response
-     */
-    public statusMessage: string;
-
-    /**
      * Constructor
      * @param status        The status code
      * @param statusText    The status text
-     * @param statusMessage The message of response
      */
-    constructor(status: number, statusText: string, statusMessage: string) {
+    constructor(status: number, statusText: string) {
         super(statusText);
         this.name = "NetworkError";
         this.status = status;
         this.statusText = statusText;
-        this.statusMessage = statusMessage;
     }
 }
 
@@ -50,10 +43,9 @@ export class NotFoundError extends NetworkError {
      * Constructor
      * @param status        The status code
      * @param statusText    The status text
-     * @param statusMessage The message of response
      */
-    constructor(status: number, statusText: string, statusMessage: string) {
-        super(status, statusText, statusMessage);
+    constructor(status: number, statusText: string) {
+        super(status, statusText);
         this.name = "NotFoundError";
     }
 }
@@ -66,10 +58,9 @@ export class BadRequestError extends NetworkError {
      * Constructor
      * @param status        The status code
      * @param statusText    The status text
-     * @param statusMessage The message of response
      */
-    constructor(status: number, statusText: string, statusMessage: string) {
-        super(status, statusText, statusMessage);
+    constructor(status: number, statusText: string) {
+        super(status, statusText);
         this.name = "BadRequestError";
     }
 }
@@ -86,23 +77,13 @@ export function handleNetworkError(error: any): Error {
         error.response.status !== undefined &&
         error.response.statusText !== undefined
     ) {
-        let statusMessage: string;
-        if (error.response.data !== undefined) {
-            if (typeof error.response.data === "string") statusMessage = error.response.data;
-            else if (typeof error.response.data === "object" && error.response.data.statusMessage !== undefined)
-                statusMessage = error.response.data.statusMessage;
-            else if (typeof error.response.data === "object" && error.response.data.errorMessage !== undefined)
-                statusMessage = error.response.data.errorMessage;
-            else statusMessage = error.response.data.toString();
-        } else statusMessage = "";
-
         switch (error.response.status) {
             case 400:
-                return new BadRequestError(error.response.status, error.response.statusText, statusMessage);
+                return new BadRequestError(error.response.status, error.response.statusText);
             case 404:
-                return new NotFoundError(error.response.status, error.response.statusText, statusMessage);
+                return new NotFoundError(error.response.status, error.response.statusText);
             default:
-                return new NetworkError(error.response.status, error.response.statusText, statusMessage);
+                return new NetworkError(error.response.status, error.response.statusText);
         }
     } else {
         if (error.message !== undefined) return new Error(error.message);

@@ -55,3 +55,50 @@ export class BodyParseError extends ClientError {
         this.message = "Error parsing body";
     }
 }
+
+export class NoValidator extends Error {
+    constructor() {
+        super("No Validators");
+    }
+}
+
+export class FailedParameterValidation extends Error {
+    constructor() {
+        super("Parameter validation failed");
+    }
+}
+
+export class NotValidSignature extends Error {
+    constructor() {
+        super("Signature is not valid");
+    }
+}
+
+export class AlreadyRegisteredEmail extends Error {
+    constructor() {
+        super("Email is already registered");
+    }
+}
+
+export class AlreadyRegisteredAddress extends Error {
+    constructor() {
+        super("Address is already registered");
+    }
+}
+
+export class ServerError extends Error {
+    constructor() {
+        super("Failed request");
+    }
+}
+
+export class UnknownError extends Error {
+    constructor() {
+        super("Unknown error occurred");
+    }
+}
+export class EVMError extends Error {
+    constructor() {
+        super("Error in EVM");
+    }
+}

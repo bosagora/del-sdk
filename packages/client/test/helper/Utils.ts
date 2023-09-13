@@ -38,12 +38,6 @@ export class Utils {
     public static isNegative(value: string): boolean {
         return /^-?[0-9]\d*(\.\d+)?$/.test(value);
     }
-
-    public static delay(interval: number): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            setTimeout(resolve, interval);
-        });
-    }
 }
 
 /**

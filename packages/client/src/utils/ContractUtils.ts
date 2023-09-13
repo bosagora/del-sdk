@@ -50,6 +50,16 @@ export class ContractUtils {
         return "0x" + data.toString("hex");
     }
 
+    public static getTimeStamp(): number {
+        return Math.floor(new Date().getTime() / 1000);
+    }
+
+    public static delay(interval: number): Promise<void> {
+        return new Promise<void>((resolve, _) => {
+            setTimeout(resolve, interval);
+        });
+    }
+
     public static getRequestId(emailHash: string, address: string, nonce: BigNumberish): string {
         const encodedResult = ethers.utils.defaultAbiCoder.encode(
             ["bytes32", "address", "uint256", "bytes32"],

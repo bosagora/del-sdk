@@ -6,10 +6,11 @@ import { Client, Context, ContractUtils } from "../src";
 import { AddRequestSteps } from "../src/interfaces";
 import { BigNumber } from "ethers";
 import { ContractDeployer, Deployment } from "./helper/ContractDeployer";
+import { RegisterSteps } from "../src/interfaces";
 
 describe("SDK Client", () => {
     let deployment: Deployment;
-    const [, , validator1, validator2, , user1] = GanacheServer.accounts();
+    const [, , validator1, validator2, , user1, user2] = GanacheServer.accounts();
     let fakerValidator: FakerValidator;
 
     describe("SDK Client", () => {
@@ -20,9 +21,7 @@ describe("SDK Client", () => {
 
             deployment = await ContractDeployer.deploy();
 
-            GanacheServer.setTestWeb3Signer(user1);
-
-            fakerValidator = new FakerValidator(7070, deployment);
+            fakerValidator = new FakerValidator(7080, deployment);
             await fakerValidator.start();
         });
 
@@ -31,11 +30,13 @@ describe("SDK Client", () => {
             await fakerValidator.stop();
         });
 
-        describe("Method Check", () => {
+        describe("Method Check - Not Use FakerValidator", () => {
             let client: Client;
             beforeAll(async () => {
+                GanacheServer.setTestWeb3Signer(user1);
                 const context = new Context(contextParamsLocalChain);
                 client = new Client(context);
+                await client.methods.assignValidatorEndpoint();
             });
 
             const userEmail = "a@example.com";
@@ -52,10 +53,10 @@ describe("SDK Client", () => {
                             expect(step.id).toMatch(/^0x[A-Fa-f0-9]{64}$/i);
                             expect(step.email).toEqual(userEmail);
                             expect(step.emailHash).toEqual(ContractUtils.sha256String(userEmail));
-                            expect(step.wallet).toEqual(await user1.getAddress());
+                            expect(step.address).toEqual(await user1.getAddress());
                             requestId = step.id;
                             emailHash = step.emailHash;
-                            address = step.wallet;
+                            address = step.address;
                             break;
                         default:
                             throw new Error("Unexpected step: " + JSON.stringify(step, null, 2));
@@ -76,10 +77,51 @@ describe("SDK Client", () => {
                 await expect(await client.methods.toAddress(emailHash)).toEqual(address);
                 await expect(await client.methods.toEmail(address)).toEqual(emailHash);
             });
+        });
 
-            it("getValidators", async () => {
-                const infos = await client.methods.getValidators();
-                console.log(infos);
+        describe("Method Check - Use FakerValidator", () => {
+            let client: Client;
+            beforeAll(async () => {
+                GanacheServer.setTestWeb3Signer(user2);
+                const context = new Context(contextParamsLocalChain);
+                client = new Client(context);
+                await client.methods.assignValidatorEndpoint();
+            });
+
+            it("Server Health Checking", async () => {
+                const isUp = await client.methods.isRelayUp();
+                expect(isUp).toEqual(true);
+            });
+
+            const userEmail = "b@example.com";
+            it("register", async () => {
+                for await (const step of client.methods.register(userEmail)) {
+                    switch (step.key) {
+                        case RegisterSteps.DOING:
+                            expect(step.requestId).toMatch(/^0x[A-Fa-f0-9]{64}$/i);
+                            expect(step.email).toEqual(userEmail);
+                            expect(step.address).toEqual(await user2.getAddress());
+                            break;
+                        case RegisterSteps.DONE:
+                            expect(step.requestId).toMatch(/^0x[A-Fa-f0-9]{64}$/i);
+                            expect(step.email).toEqual(userEmail);
+                            expect(step.address).toEqual(await user2.getAddress());
+                            break;
+                        default:
+                            throw new Error("Unexpected step: " + JSON.stringify(step, null, 2));
+                    }
+                }
+            });
+
+            it("Wait", async () => {
+                await ContractUtils.delay(3000);
+            });
+
+            it("Check", async () => {
+                const emailHash = ContractUtils.sha256String(userEmail);
+                const address = await user2.getAddress();
+                await expect(await client.methods.toAddress(emailHash)).toEqual(address);
+                await expect(await client.methods.toEmail(address)).toEqual(emailHash);
             });
         });
     });
