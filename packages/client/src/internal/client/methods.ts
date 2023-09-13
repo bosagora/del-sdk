@@ -1,7 +1,7 @@
 import { LinkCollection__factory } from "del-osx-lib";
 import { NoProviderError, NoSignerError } from "del-sdk-common";
 
-import { AddRequestSteps, AddRequestValue, IClientMethods } from "../../interfaces";
+import { AddRequestSteps, AddRequestValue, IClientMethods, ValidatorInfoValue } from "../../interfaces";
 
 import { ClientCore, Context } from "../../client-common";
 import { ContractUtils } from "../../utils/ContractUtils";
@@ -119,5 +119,25 @@ export class ClientMethods extends ClientCore implements IClientMethods {
             const id = ContractUtils.getRequestId(emailHash, address, nonce);
             if (await contract.isAvailable(id)) return id;
         }
+    }
+
+    public async getValidators(): Promise<ValidatorInfoValue[]> {
+        const signer = this.web3.getConnectedSigner();
+        if (!signer) {
+            throw new NoSignerError();
+        } else if (!signer.provider) {
+            throw new NoProviderError();
+        }
+
+        const contract = LinkCollection__factory.connect(this.web3.getLinkCollectionAddress(), signer);
+        const validators = await contract.getValidators()
+        return validators.map(m => {
+            return {
+                address: m.validator,
+                index: m.index.toNumber(),
+                endpoint: m.endpoint,
+                status: m.status
+            }
+        })
     }
 }

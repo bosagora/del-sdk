@@ -1,5 +1,5 @@
 {
-  "name": "del-osx",
+  "name": "del-sdk",
   "version": "1.0.0",
   "description": "JS SDK for links e-mail and wallet addresses",
   "repository": "https://github.com/bosagora/del-sdk",
