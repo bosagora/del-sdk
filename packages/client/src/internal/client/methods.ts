@@ -10,7 +10,7 @@ import {
     ValidatorInfoValue,
 } from "../../interfaces";
 
-import { ClientCore, Context } from "../../client-common";
+import { ClientCore, Context, IHttpConfig } from "../../client-common";
 import { ContractUtils } from "../../utils/ContractUtils";
 import { BigNumber } from "ethers";
 import { Contract } from "@ethersproject/contracts";
@@ -19,6 +19,7 @@ import {
     AlreadyRegisteredEmail,
     FailedParameterValidation,
     NotValidSignature,
+    NoValidator,
     ServerError,
     UnknownError,
 } from "../../utils/errors";
@@ -29,20 +30,40 @@ import { handleNetworkError } from "../../utils/network/ErrorTypes";
  * Methods module the SDK Generic Client
  */
 export class ClientMethods extends ClientCore implements IClientMethods {
+    public config: IHttpConfig;
+
     constructor(context: Context) {
         super(context);
+
+        this.config = {
+            url: new URL("http://localhost"),
+            headers: {},
+        };
 
         Object.freeze(ClientMethods.prototype);
         Object.freeze(this);
     }
 
-    public async assignValidatorEndpoint(): Promise<void> {
-        await this.web3.assignValidatorEndpoint();
+    public async isRelayUp(): Promise<boolean> {
+        await this.assignValidatorEndpoint();
+        return await this.web3.isRelayUp(this.config);
     }
 
-    public async isRelayUp(): Promise<boolean> {
-        return await this.web3.isRelayUp();
+    public async assignValidatorEndpoint(): Promise<void> {
+        const provider = this.web3.getProvider();
+        if (!provider) {
+            throw new NoProviderError();
+        }
+
+        const contract = LinkCollection__factory.connect(this.web3.getLinkCollectionAddress(), provider);
+        const validators = await contract.getValidators();
+        if (validators.length === 0) {
+            throw new NoValidator();
+        }
+        const idx = Math.floor(Math.random() * validators.length);
+        this.config.url = new URL(validators[idx].endpoint);
     }
+
     /**
      * Add a request
      *
@@ -102,6 +123,7 @@ export class ClientMethods extends ClientCore implements IClientMethods {
      * @memberof ClientMethods
      */
     public async *register(email: string): AsyncGenerator<RegisterValue> {
+        await this.assignValidatorEndpoint();
         const signer = this.web3.getConnectedSigner();
         if (!signer) {
             throw new NoSignerError();
@@ -113,7 +135,7 @@ export class ClientMethods extends ClientCore implements IClientMethods {
         const address = await signer.getAddress();
         const nonce = await contract.nonceOf(address);
         const signature = await ContractUtils.signRequestData(signer, email, nonce);
-        const res = await this.web3.post("request", {
+        const res = await this.web3.post(this.config, "request", {
             email,
             address,
             signature,

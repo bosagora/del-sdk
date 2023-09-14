@@ -3,7 +3,7 @@
 import { Signer } from "@ethersproject/abstract-signer";
 import { Contract, ContractInterface } from "@ethersproject/contracts";
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { GenericRecord } from "./common";
+import { GenericRecord, IHttpConfig } from "./common";
 import { UnfetchResponse } from "unfetch";
 
 export interface IClientWeb3Core {
@@ -16,10 +16,9 @@ export interface IClientWeb3Core {
     ensureOnline: () => Promise<void>;
     attachContract: <T>(address: string, abi: ContractInterface) => Contract & T;
     getLinkCollectionAddress: () => string;
-    isRelayUp: () => Promise<boolean>;
-    assignValidatorEndpoint: () => Promise<void>;
-    get: (path: string, data?: GenericRecord) => Promise<UnfetchResponse>;
-    post: (path: string, data?: GenericRecord) => Promise<UnfetchResponse>;
+    isRelayUp: (config: IHttpConfig) => Promise<boolean>;
+    get: (config: IHttpConfig, path: string, data?: GenericRecord) => Promise<UnfetchResponse>;
+    post: (config: IHttpConfig, path: string, data?: GenericRecord) => Promise<UnfetchResponse>;
 }
 
 export interface IClientCore {
