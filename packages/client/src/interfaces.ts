@@ -57,15 +57,36 @@ export enum AddRequestSteps {
 }
 
 export type RegisterValue =
-    | { key: RegisterSteps.DOING; requestId: string; email: string; address: string }
+    | { key: RegisterSteps.SENDING; requestId: string; email: string; address: string }
     | {
-          key: RegisterSteps.DONE;
+          key: RegisterSteps.REQUESTED;
+          requestId: string;
+          email: string;
+          address: string;
+      }
+    | {
+          key: RegisterSteps.ACCEPTED;
+          requestId: string;
+          email: string;
+          address: string;
+      }
+    | {
+          key: RegisterSteps.REJECTED;
+          requestId: string;
+          email: string;
+          address: string;
+      }
+    | {
+          key: RegisterSteps.TIMEOUT;
           requestId: string;
           email: string;
           address: string;
       };
 
 export enum RegisterSteps {
-    DOING = "doing",
-    DONE = "done",
+    SENDING = "sending",
+    REQUESTED = "requested",
+    ACCEPTED = "accepted",
+    REJECTED = "rejected",
+    TIMEOUT = "timeout",
 }

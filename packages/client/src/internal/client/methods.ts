@@ -162,7 +162,7 @@ export class ClientMethods extends ClientCore implements IClientMethods {
         }
 
         yield {
-            key: RegisterSteps.DOING,
+            key: RegisterSteps.SENDING,
             requestId: response.data.requestId,
             email,
             address,
@@ -170,17 +170,36 @@ export class ClientMethods extends ClientCore implements IClientMethods {
 
         const start = ContractUtils.getTimeStamp();
         let done = false;
+        let status: number = 0;
         while (!done) {
-            const status = await this.getRegisterStatus(response.data.requestId);
-            if (status !== 0 || ContractUtils.getTimeStamp() - start > 60) {
+            status = await this.getRegisterStatus(response.data.requestId);
+            if (status !== 0) {
+                done = true;
+            } else if (ContractUtils.getTimeStamp() - start > 60) {
                 done = true;
             } else {
                 await ContractUtils.delay(3000);
             }
         }
 
+        let key: RegisterSteps;
+        switch (status) {
+            case 0:
+                key = RegisterSteps.TIMEOUT;
+                break;
+            case 1:
+                key = RegisterSteps.REQUESTED;
+                break;
+            case 2:
+                key = RegisterSteps.ACCEPTED;
+                break;
+            default:
+                key = RegisterSteps.REJECTED;
+                break;
+        }
+
         yield {
-            key: RegisterSteps.DONE,
+            key,
             requestId: response.data.requestId,
             email,
             address,

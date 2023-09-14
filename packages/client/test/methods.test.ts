@@ -96,12 +96,12 @@ describe("SDK Client", () => {
             it("register", async () => {
                 for await (const step of client.methods.register(userEmail)) {
                     switch (step.key) {
-                        case RegisterSteps.DOING:
+                        case RegisterSteps.SENDING:
                             expect(step.requestId).toMatch(/^0x[A-Fa-f0-9]{64}$/i);
                             expect(step.email).toEqual(userEmail);
                             expect(step.address).toEqual(await user2.getAddress());
                             break;
-                        case RegisterSteps.DONE:
+                        case RegisterSteps.REQUESTED:
                             expect(step.requestId).toMatch(/^0x[A-Fa-f0-9]{64}$/i);
                             expect(step.email).toEqual(userEmail);
                             expect(step.address).toEqual(await user2.getAddress());
