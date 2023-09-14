@@ -16,7 +16,6 @@ import { Signer } from "@ethersproject/abstract-signer";
 import { BigNumberish } from "@ethersproject/bignumber";
 import { NonceManager } from "@ethersproject/experimental";
 
-import { GasPriceManager } from "./GasPriceManager";
 import { GanacheServer } from "./GanacheServer";
 import { Deployment } from "./ContractDeployer";
 
@@ -60,15 +59,15 @@ export class FakerValidator {
     }
 
     private get validator1(): Signer {
-        return new NonceManager(new GasPriceManager(this._accounts[2]));
+        return new NonceManager(this._accounts[2]);
     }
 
     private get validator2(): Signer {
-        return new NonceManager(new GasPriceManager(this._accounts[3]));
+        return new NonceManager(this._accounts[3]);
     }
 
     private get validator3(): Signer {
-        return new NonceManager(new GasPriceManager(this._accounts[4]));
+        return new NonceManager(this._accounts[4]);
     }
 
     public start(): Promise<void> {
