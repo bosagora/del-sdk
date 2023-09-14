@@ -1,5 +1,6 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { Wallet } from "@ethersproject/wallet";
+
 import { Client, Context } from "../src";
 import { contextParamsMainnet, web3endpoints } from "./helper/constants";
 

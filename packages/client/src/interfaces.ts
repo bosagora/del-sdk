@@ -1,5 +1,6 @@
+import { BigNumber } from "@ethersproject/bignumber";
+
 import { IClientCore } from "./client-common/interfaces/core";
-import { BigNumber } from "ethers";
 
 /** Defines the shape of the general purpose Client class */
 export interface IClientMethods extends IClientCore {
@@ -17,22 +18,6 @@ export interface IClientMethods extends IClientCore {
 export interface IClient {
     methods: IClientMethods;
 }
-
-export type IdParams = {
-    id: string;
-};
-
-export type ToAddressParams = {
-    email: string;
-};
-
-export type ToEmailParams = {
-    wallet: string;
-};
-
-export type NonceOfParams = {
-    wallet: string;
-};
 
 export type ValidatorInfoValue = {
     address: string;
