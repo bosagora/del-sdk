@@ -1,3 +1,6 @@
+import { Contract } from "@ethersproject/contracts";
+import { BigNumber } from "@ethersproject/bignumber";
+
 import { LinkCollection__factory } from "del-osx-lib";
 import { NoProviderError, NoSignerError } from "del-sdk-common";
 
@@ -12,8 +15,6 @@ import {
 
 import { ClientCore, Context, IHttpConfig } from "../../client-common";
 import { ContractUtils } from "../../utils/ContractUtils";
-import { BigNumber } from "ethers";
-import { Contract } from "@ethersproject/contracts";
 import {
     AlreadyRegisteredAddress,
     AlreadyRegisteredEmail,

@@ -1,4 +1,5 @@
 import { Wallet } from "@ethersproject/wallet";
+
 import { ContextParams } from "../../src";
 
 export const web3endpoints = {

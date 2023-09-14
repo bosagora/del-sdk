@@ -1,5 +1,6 @@
-import { ContextParams, ContextState } from "./interfaces/context";
 import { JsonRpcProvider, Networkish } from "@ethersproject/providers";
+
+import { ContextParams, ContextState } from "./interfaces/context";
 import { UnsupportedProtocolError } from "del-sdk-common";
 import { activeContractsList } from "del-osx-lib";
 

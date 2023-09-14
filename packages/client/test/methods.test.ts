@@ -1,10 +1,11 @@
+import { BigNumber } from "@ethersproject/bignumber";
+
 import { Server } from "ganache";
 import { GanacheServer } from "./helper/GanacheServer";
 import { contextParamsLocalChain } from "./helper/constants";
 import { FakerValidator } from "./helper/FakerValidator";
 import { Client, Context, ContractUtils } from "../src";
 import { AddRequestSteps } from "../src/interfaces";
-import { BigNumber } from "ethers";
 import { ContractDeployer, Deployment } from "./helper/ContractDeployer";
 import { RegisterSteps } from "../src/interfaces";
 
