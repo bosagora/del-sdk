@@ -12,8 +12,9 @@ import { body, validationResult } from "express-validator";
 import { LinkCollection, LinkCollection__factory } from "del-osx-lib";
 
 import { AddressZero, HashZero } from "@ethersproject/constants";
+import { Signer } from "@ethersproject/abstract-signer";
+import { BigNumberish } from "@ethersproject/bignumber";
 import { NonceManager } from "@ethersproject/experimental";
-import { BigNumberish, Signer } from "ethers";
 
 import { GasPriceManager } from "./GasPriceManager";
 import { GanacheServer } from "./GanacheServer";
