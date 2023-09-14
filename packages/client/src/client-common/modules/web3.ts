@@ -4,12 +4,9 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import { Contract, ContractInterface } from "@ethersproject/contracts";
 import { Signer } from "@ethersproject/abstract-signer";
 import { IClientWeb3Core } from "../interfaces/core";
-import { NoLinkCollection, NoProviderError, NoSignerError } from "del-sdk-common";
+import { NoLinkCollection } from "del-sdk-common";
 import { GenericRecord, IHttpConfig } from "../interfaces/common";
-import { LinkCollection__factory } from "del-osx-lib";
-import { NoValidator } from "../../utils/errors";
-import { Network } from "../../utils/network";
-import { UnfetchResponse } from "unfetch";
+import fetch, { UnfetchResponse } from "unfetch";
 
 const linkCollectionAddressMap = new Map<Web3Module, string>();
 const providersMap = new Map<Web3Module, JsonRpcProvider[]>();
@@ -33,10 +30,6 @@ export class Web3Module implements IClientWeb3Core {
             linkCollectionAddressMap.set(this, context.linkCollectionAddress);
         }
 
-        this.config = {
-            url: new URL("http://localhost"),
-            headers: {},
-        };
         Object.freeze(Web3Module.prototype);
         Object.freeze(this);
     }
@@ -164,39 +157,43 @@ export class Web3Module implements IClientWeb3Core {
         }
         return this.linkCollectionAddress;
     }
-    public config: IHttpConfig;
 
-    public async assignValidatorEndpoint(): Promise<void> {
-        const signer = this.getConnectedSigner();
-        if (!signer) {
-            throw new NoSignerError();
-        } else if (!signer.provider) {
-            throw new NoProviderError();
-        }
-
-        const contract = LinkCollection__factory.connect(this.getLinkCollectionAddress(), signer);
-        const validators = await contract.getValidators();
-        if (validators.length === 0) {
-            throw new NoValidator();
-        }
-        const idx = Math.floor(Math.random() * validators.length);
-        this.config.url = new URL(validators[idx].endpoint);
-    }
-
-    public async isRelayUp(): Promise<boolean> {
+    public async isRelayUp(config: IHttpConfig): Promise<boolean> {
         try {
-            const res = await this.get("/");
+            const res = await this.get(config, "/");
             return (res.status === 200 && (await res.json())) === "OK";
         } catch {
             return false;
         }
     }
 
-    public async get(path: string, data?: GenericRecord): Promise<UnfetchResponse> {
-        return Network.get(this.config, path, data);
+    public async get(config: IHttpConfig, path: string, data?: GenericRecord): Promise<UnfetchResponse> {
+        const { url, headers } = config;
+        const endpoint: URL = new URL(path, url);
+        for (const [key, value] of Object.entries(data ?? {})) {
+            if (value != null) {
+                endpoint.searchParams.set(key, String(value));
+            }
+        }
+        const response: UnfetchResponse = await fetch(endpoint.href, {
+            method: "GET",
+            headers,
+        });
+        return response;
     }
 
-    public async post(path: string, data?: GenericRecord): Promise<UnfetchResponse> {
-        return Network.post(this.config, path, data);
+    public async post(config: IHttpConfig, path: string, data?: GenericRecord): Promise<UnfetchResponse> {
+        const { url, headers } = config;
+        const endpoint: URL = new URL(path, url);
+        const response: UnfetchResponse = await fetch(endpoint.href, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                ...headers,
+            },
+            body: JSON.stringify(data),
+        });
+
+        return response;
     }
 }

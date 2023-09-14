@@ -85,7 +85,6 @@ describe("SDK Client", () => {
                 GanacheServer.setTestWeb3Signer(user2);
                 const context = new Context(contextParamsLocalChain);
                 client = new Client(context);
-                await client.methods.assignValidatorEndpoint();
             });
 
             it("Server Health Checking", async () => {
