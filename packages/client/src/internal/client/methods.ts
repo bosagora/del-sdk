@@ -58,6 +58,12 @@ export class ClientMethods extends ClientCore implements IClientMethods {
             throw new NoProviderError();
         }
 
+        const network = getNetwork((await provider.getNetwork()).chainId);
+        const networkName = network.name as SupportedNetworks;
+        if (!SupportedNetworksArray.includes(networkName)) {
+            throw new UnsupportedNetworkError(networkName);
+        }
+
         const contract = LinkCollection__factory.connect(this.web3.getLinkCollectionAddress(), provider);
         const validators = await contract.getValidators();
         if (validators.length === 0) {
@@ -80,6 +86,12 @@ export class ClientMethods extends ClientCore implements IClientMethods {
             throw new NoSignerError();
         } else if (!signer.provider) {
             throw new NoProviderError();
+        }
+
+        const network = getNetwork((await signer.provider.getNetwork()).chainId);
+        const networkName = network.name as SupportedNetworks;
+        if (!SupportedNetworksArray.includes(networkName)) {
+            throw new UnsupportedNetworkError(networkName);
         }
 
         const contract = LinkCollection__factory.connect(this.web3.getLinkCollectionAddress(), signer);
@@ -221,6 +233,12 @@ export class ClientMethods extends ClientCore implements IClientMethods {
             throw new NoProviderError();
         }
 
+        const network = getNetwork((await provider.getNetwork()).chainId);
+        const networkName = network.name as SupportedNetworks;
+        if (!SupportedNetworksArray.includes(networkName)) {
+            throw new UnsupportedNetworkError(networkName);
+        }
+
         const contract = LinkCollection__factory.connect(this.web3.getLinkCollectionAddress(), provider);
 
         return await contract.toAddress(email);
@@ -232,6 +250,12 @@ export class ClientMethods extends ClientCore implements IClientMethods {
             throw new NoProviderError();
         }
 
+        const network = getNetwork((await provider.getNetwork()).chainId);
+        const networkName = network.name as SupportedNetworks;
+        if (!SupportedNetworksArray.includes(networkName)) {
+            throw new UnsupportedNetworkError(networkName);
+        }
+
         const contract = LinkCollection__factory.connect(this.web3.getLinkCollectionAddress(), provider);
 
         return await contract.toEmail(address);
@@ -241,6 +265,12 @@ export class ClientMethods extends ClientCore implements IClientMethods {
         const provider = this.web3.getProvider();
         if (!provider) {
             throw new NoProviderError();
+        }
+
+        const network = getNetwork((await provider.getNetwork()).chainId);
+        const networkName = network.name as SupportedNetworks;
+        if (!SupportedNetworksArray.includes(networkName)) {
+            throw new UnsupportedNetworkError(networkName);
         }
 
         const contract = LinkCollection__factory.connect(this.web3.getLinkCollectionAddress(), provider);
@@ -267,6 +297,12 @@ export class ClientMethods extends ClientCore implements IClientMethods {
             throw new NoProviderError();
         }
 
+        const network = getNetwork((await provider.getNetwork()).chainId);
+        const networkName = network.name as SupportedNetworks;
+        if (!SupportedNetworksArray.includes(networkName)) {
+            throw new UnsupportedNetworkError(networkName);
+        }
+
         const contract = LinkCollection__factory.connect(this.web3.getLinkCollectionAddress(), provider);
         const validators = await contract.getValidators();
         return validators.map(m => {
@@ -283,6 +319,12 @@ export class ClientMethods extends ClientCore implements IClientMethods {
         const provider = this.web3.getProvider();
         if (!provider) {
             throw new NoProviderError();
+        }
+
+        const network = getNetwork((await provider.getNetwork()).chainId);
+        const networkName = network.name as SupportedNetworks;
+        if (!SupportedNetworksArray.includes(networkName)) {
+            throw new UnsupportedNetworkError(networkName);
         }
 
         const contract = LinkCollection__factory.connect(this.web3.getLinkCollectionAddress(), provider);
