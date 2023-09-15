@@ -252,7 +252,7 @@ export class FakerValidator {
 
     private async voteAgreement(signer: Signer, requestId: string) {
         try {
-            await (await this.getContract()).connect(signer).voteRequest(requestId, 1);
+            await (await this.getContract()).connect(signer).voteRequest(requestId);
         } catch (e) {
             const message = e instanceof Error && e.message !== undefined ? e.message : "Error when calling contract";
             console.error(message);

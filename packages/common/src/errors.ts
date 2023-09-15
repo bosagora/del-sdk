@@ -44,3 +44,9 @@ export class NoLinkCollection extends Error {
     super("A link collection address is needed");
   }
 }
+
+export class UnsupportedNetworkError extends Error {
+  constructor(network: string) {
+    super("Unsupported network: " + network);
+  }
+}

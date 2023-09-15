@@ -78,7 +78,7 @@
     "@ethersproject/networks": "npm:boa-networks@^5.7.2",
     "@ethersproject/providers": "^5.7.0",
     "@ethersproject/wallet": "^5.7.0",
-    "del-osx-lib": "^1.0.6",
+    "del-osx-lib": "^1.0.7",
     "del-sdk-common": "^1.0.0",
     "dotenv": "^16.3.1",
     "unfetch": "^5.0.0"
