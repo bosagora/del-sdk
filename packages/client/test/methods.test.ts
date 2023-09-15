@@ -1,5 +1,3 @@
-import { BigNumber } from "@ethersproject/bignumber";
-
 import { Server } from "ganache";
 import { GanacheServer } from "./helper/GanacheServer";
 import { contextParamsLocalChain } from "./helper/constants";
@@ -66,8 +64,8 @@ describe("SDK Client", () => {
             });
 
             it("Vote request", async () => {
-                await deployment.linkCollection.connect(validator1).voteRequest(requestId, BigNumber.from(1));
-                await deployment.linkCollection.connect(validator2).voteRequest(requestId, BigNumber.from(1));
+                await deployment.linkCollection.connect(validator1).voteRequest(requestId);
+                await deployment.linkCollection.connect(validator2).voteRequest(requestId);
             });
 
             it("Count Vote", async () => {

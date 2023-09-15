@@ -1,8 +1,10 @@
+import { SupportedNetworks, SupportedNetworksArray } from "../../client-common";
 import { Contract } from "@ethersproject/contracts";
 import { BigNumber } from "@ethersproject/bignumber";
+import { getNetwork } from "@ethersproject/networks";
 
 import { LinkCollection__factory } from "del-osx-lib";
-import { NoProviderError, NoSignerError } from "del-sdk-common";
+import { NoProviderError, NoSignerError, UnsupportedNetworkError } from "del-sdk-common";
 
 import {
     AddRequestSteps,
@@ -130,6 +132,12 @@ export class ClientMethods extends ClientCore implements IClientMethods {
             throw new NoSignerError();
         } else if (!signer.provider) {
             throw new NoProviderError();
+        }
+
+        const network = getNetwork((await signer.provider.getNetwork()).chainId);
+        const networkName = network.name as SupportedNetworks;
+        if (!SupportedNetworksArray.includes(networkName)) {
+            throw new UnsupportedNetworkError(networkName);
         }
 
         const contract = LinkCollection__factory.connect(this.web3.getLinkCollectionAddress(), signer);
